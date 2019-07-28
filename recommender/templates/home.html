@@ -1,7 +1,16 @@
-{% if user.is_authenticated %}
-<h1>
-  I love benjamin.
-</h1>
-{% else %}
-  <h1> Please login <a href="/">here</a> </h1>
-{% endif %}
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+  {% for course in saved_courses %}
+    <div class="col-lg-4 col-sm-6 mb-4">
+      <div class="card h-100">
+        <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
+        <div class="card-body">
+          <h4 class="card-title">{{ course.title }}</h4>
+          <p class="card-text">{{ course.description }}</p>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
