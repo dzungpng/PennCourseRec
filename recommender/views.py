@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
@@ -41,7 +43,19 @@ def logout_(request):
 
 def submit_description(request):
     """
-    Makes a form for user to fill out their ideal course and submit to get recommendations.
+    Makes a form for user to fill out their ideal course and submit
+    to get recommendations.
     """
-    form = DescriptionSubmitForm()
+    # form = DescriptionSubmitForm()
+    # return render(request, 'submit_description.html', {'form': form})
+    if request.method == "POST":
+        form = DescriptionSubmitForm(request.POST)
+        if form.is_valid():
+            course = form.save(commit=False)
+            course.user = request.user
+            course.created_date = timezone.now()
+            course.save()
+            return redirect("/home", pk=course.pk)
+    else:
+        form = DescriptionSubmitForm()
     return render(request, 'submit_description.html', {'form': form})
