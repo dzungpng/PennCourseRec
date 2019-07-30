@@ -8,6 +8,8 @@ from django.views.generic import UpdateView
 from .models import Course
 from .forms import DescriptionSubmitForm
 
+from .course_retrieval_engine import CourseRetrievalEngine
+
 def home(request):
     # this is just a placeholder
     courses = Course.objects.filter(difficulty='3.00')[:6]
@@ -45,9 +47,10 @@ def submit_description(request):
     """
     Makes a form for user to fill out their ideal course and submit
     to get recommendations.
-    """
+    # """
     # form = DescriptionSubmitForm()
     # return render(request, 'submit_description.html', {'form': form})
+    saved_courses = dict()
     if request.method == "POST":
         form = DescriptionSubmitForm(request.POST)
         if form.is_valid():
@@ -55,7 +58,18 @@ def submit_description(request):
             course.user = request.user
             course.created_date = timezone.now()
             course.save()
-            return redirect("/home", pk=course.pk)
+            engine = CourseRetrievalEngine()
+            recs = engine.query_similar_courses(course.description, 6)
+            saved_courses = engine.view_recommendations(recs)
+            print(saved_courses)
+            #print(course.name)
+            #print(course.description)
+            #print(course.user)
+            #print(course.created_date)
+            #return redirect("/home", pk=course.pk) #this should be return render(request, 'home.html', {'recs': 'recs'})
+            return render(request, 'home.html', {'saved_courses': saved_courses})
     else:
         form = DescriptionSubmitForm()
     return render(request, 'submit_description.html', {'form': form})
+    # if request.method == "POST":
+    #     print("On submit")
