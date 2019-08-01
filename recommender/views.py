@@ -1,5 +1,4 @@
 from django.utils import timezone
-
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
@@ -48,8 +47,6 @@ def submit_description(request):
     Makes a form for user to fill out their ideal course and submit
     to get recommendations.
     # """
-    # form = DescriptionSubmitForm()
-    # return render(request, 'submit_description.html', {'form': form})
     saved_courses = dict()
     if request.method == "POST":
         form = DescriptionSubmitForm(request.POST)
@@ -61,15 +58,7 @@ def submit_description(request):
             engine = CourseRetrievalEngine()
             recs = engine.query_similar_courses(course.description, 6)
             saved_courses = engine.view_recommendations(recs)
-            print(saved_courses)
-            #print(course.name)
-            #print(course.description)
-            #print(course.user)
-            #print(course.created_date)
-            #return redirect("/home", pk=course.pk) #this should be return render(request, 'home.html', {'recs': 'recs'})
             return render(request, 'home.html', {'saved_courses': saved_courses})
     else:
         form = DescriptionSubmitForm()
-    return render(request, 'submit_description.html', {'form': form})
-    # if request.method == "POST":
-    #     print("On submit")
+        return render(request, 'submit_description.html', {'form': form})
