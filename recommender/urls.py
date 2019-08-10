@@ -10,5 +10,6 @@ urlpatterns = [
     path('home', home, name='home'),
     path('recommendation/submit/', submit_description, name='get-rec'),
     path('saved_descriptions', save_description, name = 'save'),
+    path('recommendation/submit/saved_descriptions', save_description, name = 'save2'),
     path('courses_for_descriptions', recommendation, name = 'recommendation')
 ]
