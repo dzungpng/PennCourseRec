@@ -10,16 +10,25 @@ from .forms import DescriptionSubmitForm
 
 from .course_retrieval_engine import CourseRetrievalEngine
 
-#global saved_courses 
-#global form
+
 def home(request):
     # this is just a placeholder
     courses = Course.objects.filter(difficulty='3.00')[:6]
     return render(request, 'home.html', {'saved_courses': courses})
 
 
+def about(request):
+    """
+    Appears when click on 'PennCourseRec' title.
+
+    :param request:
+    :return: None.
+    """
+    return render(request, 'about.html')
+
+
 def login_(request):
-    if request.method =="POST":
+    if request.method == "POST":
         user = authenticate(
             username=request.POST['username'], password=request.POST['password'])
         if user is not None:
@@ -29,7 +38,7 @@ def login_(request):
 
 
 def signup(request):
-    #signup and authenticates user
+    # signup and authenticates user
     if request.method == "POST":
         user = User.objects.create_user(username=request.POST['username'],
                                         email=request.POST['email'],
@@ -49,19 +58,15 @@ def submit_description(request):
     """
     Makes a form for user to fill out their ideal course and submit
     to get recommendations.
-    # """
-    # form = DescriptionSubmitForm()
-    # return render(request, 'submit_description.html', {'form': form})
-   # global saved_courses 
+
+    """
+    # global saved_courses
     saved_courses = dict()
   
     if request.method == "POST":
         form = DescriptionSubmitForm(request.POST)
-       # print(form.fields)
-       # request.session['form'] = form.fields
         if form.is_valid():
             course = form.save(commit=False)
-            #print(course)
             request.session['description'] = course.description
             request.session['name'] = course.name
             course.user = request.user
@@ -71,12 +76,6 @@ def submit_description(request):
             recs = engine.query_similar_courses(course.description, 6)
             saved_courses = engine.view_recommendations(recs)
             request.session['saved_courses'] = saved_courses
-            print(saved_courses)
-            #print(course.name)
-            #print(course.description)
-            #print(course.user)
-            #print(course.created_date)
-            #return redirect("/home", pk=course.pk) #this should be return render(request, 'home.html', {'recs': 'recs'})
             return render(request, 'home.html', {'saved_courses': saved_courses})
     else:
         form = DescriptionSubmitForm()
@@ -84,13 +83,14 @@ def submit_description(request):
     # if request.method == "POST":
     #     print("On submit")
 
+
 def save_description(request):
-    #save the description
+    # save the description
     if request.method == "POST":
-       # print("HELLELKFJEF")
-        saved_description = SavedDescription.objects.create(user = request.user, 
-            description = request.session['description'], name = request.session['name'])
-        #saved_description.course.clear()
+        saved_description = SavedDescription.objects.create(user=request.user,
+                                                            description=request.session['description'],
+                                                            name=request.session['name'])
+        # saved_description.course.clear()
         for course in request.session['saved_courses']:
             print(course)
             print(type(course))
@@ -99,8 +99,9 @@ def save_description(request):
     all_saved_descriptions = SavedDescription.objects.all()
     return render(request, 'saved_description.html', {'all_saved_descriptions' : all_saved_descriptions})
 
+
 def recommendation(request):
-    #get the list of courses attached to a certain saved description
+    # get the list of courses attached to a certain saved description
     description = SavedDescription.objects.get(id=request.GET["id"])
     courses = description.course.all()
     return render(request, "courses.html", {"courses": courses})
