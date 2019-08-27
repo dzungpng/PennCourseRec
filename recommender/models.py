@@ -16,4 +16,12 @@ class SubmittedDescription(models.Model):
     user = models.ForeignKey(User, null = True, blank = True, on_delete = models.DO_NOTHING)
     description = models.TextField(null = True)
     name = models.CharField(max_length=200)
-    created_date = models.DateTimeField(default=timezone.now)
+    created_date = models.DateTimeField(auto_now = True)
+    #course = models.ManyToManyField(Course, null = True, blank = True)
+
+class SavedDescription(models.Model):
+    user = models.ForeignKey(User, null = True, blank = True, on_delete = models.DO_NOTHING)
+    description = models.TextField(null = True)
+    name = models.CharField(max_length=200)
+    created_date = models.DateTimeField(auto_now = True)
+    course = models.ManyToManyField(Course, null = True, blank = True)

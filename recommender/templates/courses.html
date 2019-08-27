@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="row">
-  {% for course in saved_courses %}
+  {% for course in courses %}
     <div class="col-lg-4 col-sm-6 mb-4">
       <div class="card h-100">
         <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
@@ -14,8 +14,4 @@
   {% endfor %}
 </div>
 
-<form method = "POST" action = "/saved_descriptions" >
-  {% csrf_token %}
-  <input type = "submit" value = "Save this description" >
-</form>
 {% endblock %}
